@@ -31,9 +31,11 @@ const getUserData= async(id) =>{
         // console.log(url);
     let response = await fetch(url);
    
-    let todos = await response.json();
-
-    return todos;
+    let userinfo = await response.json();
+    
+    if(!userinfo) return "error";
+    else 
+    {return userinfo;}
     } catch (error) {
         console.error(error);
         return "error";
@@ -71,7 +73,7 @@ let user_final = (data)=>{
 
 
 let user_todos =  (id,todos)=>{
-    let flag=false;
+    
     todos_arr=[];
     
 
@@ -131,11 +133,17 @@ app.get('/todos',(req,res)=>{
 app.get('/user/:id',(req,res)=>{
 const id = parseInt(req.params.id);
 var todos = [];
-getUserData(id).then((data)=>{
+getUserData(id).then((userdata)=>{
     try {
-        let user_obj=user_final(data);
+        // console.log(userdata);
+        if(userdata==={ })
+        return  res.status(404).send("Not found");
+        let user_obj=user_final(userdata);
    getTodoData().then((data) =>{
+    if(userdata=="error")
+    return  res.status(404).send("Not found");
     todos=  user_todos(id,data);
+    
     user_obj = {...user_obj,"todos":todos};
     // console.log(user_obj);
     res.json(user_obj);
