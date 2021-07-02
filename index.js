@@ -143,7 +143,10 @@ getUserData(id).then((userdata)=>{
     if(userdata=="error")
     return  res.status(404).send("Not found");
     todos=  user_todos(id,data);
-    
+    if(todos.length==0)
+    {
+        return res.status(404).send("Cannot be fetched...");
+    }
     user_obj = {...user_obj,"todos":todos};
     // console.log(user_obj);
     res.json(user_obj);
