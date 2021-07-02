@@ -1,18 +1,11 @@
 const express = require('express');
 const app = express();
 const fetch =require('node-fetch');
-const axios = require('axios');
 const todosUrl = "https://jsonplaceholder.typicode.com/todos";
 const userUrl = "https://jsonplaceholder.typicode.com/users/";
-// console.log(userUrl+'1');
-// app.use(express.json());
 
-
-
-
-
-
-
+/*Firstly ,we will define a function which will fetch the user data and todos data 
+from the given URL*/
 const getTodoData= async() =>{
     try {
     let response = await fetch(todosUrl);
@@ -27,18 +20,18 @@ const getTodoData= async() =>{
 
 const getUserData= async(id) =>{
     try {
-        const url = userUrl + id;
-        // console.log(url);
+        const url = userUrl + id; 
+
     let response = await fetch(url);
    
     let userinfo = await response.json();
     
     if(!userinfo) return "error";
-    else 
-    {return userinfo;}
-    } catch (error) {
-        console.error(error);
-        return "error";
+    else return userinfo;
+    } 
+    catch (error) {
+    console.error(error);
+    return "error";
     }
     
 } 
@@ -46,17 +39,18 @@ const getUserData= async(id) =>{
 
 
 
-
+/*From the user info's JSON, we need only specific key value pairs to be in our 
+ final object. So, first, we defined the array of required keys. Now, we will iterate 
+ through each individual key and dynamically create a user_obj object with the require 
+ keys */
 let user_final = (data)=>{
     let flag=false;
     let user_obj = {};
-     // console.log(data);
+    
   const required_keys = ["id","name","email","phone"];
-  //   const keys_present = Object.keys(data);
-  //   console.log(keys_present);
-    required_keys.forEach((e)=>{
-        if (required_keys.includes(e))
-        {
+ 
+    required_keys.forEach((e)=>{ 
+       
             if(flag==false){
                 flag=true;
             user_obj={
@@ -65,36 +59,29 @@ let user_final = (data)=>{
             else{
                 user_obj = {...user_obj,[e]:data[e],}
             }
-        }
+        
         
     })
     return user_obj;
 } 
 
-
+/*In the below function, we are just fetching todos of a given userid. Also, in the 
+final array of objects, we don't want userId. So we are deleting it */
 let user_todos =  (id,todos)=>{
     
     todos_arr=[];
-    
-
-    
-
-    // console.log(todos);
+   
     for(var i=0;i<todos.length;i++)
     {
         if(parseInt(todos[i]["userId"])===id)
         {
-            // console.log(todos[i]);
+            
             delete todos[i]["userId"];
             todos_arr.push(todos[i]);
         }
     }
     return todos_arr;
-    
-    
-    
-
-
+ 
 
 }
 
@@ -122,7 +109,9 @@ app.get('/todos',(req,res)=>{
             
         }
         
-        res.json(newobj);     //This is a final object which is free of userId
+        /*This is a final object which is free of userId. The below object is the answer
+        of first statement*/
+        res.json(newobj);     
         
 }}
     )
@@ -135,7 +124,7 @@ const id = parseInt(req.params.id);
 var todos = [];
 getUserData(id).then((userdata)=>{
     try {
-        // console.log(userdata);
+        
         if(userdata==={ })
         return  res.status(404).send("Not found");
         let user_obj=user_final(userdata);
@@ -159,72 +148,10 @@ getUserData(id).then((userdata)=>{
 
 
    })
-   //    console.log(user_obj); working
    
-  
   
   
 })
-// getTodoData().then((data)=>{
-
-
-
-
-
-
-
-
-
-// const getTodoData2 = async()=>
-// {
-//     let {data}= await axios.get(url);
-//      console.log({data})
-// }
-
-// getTodoData2();
-
-
-
-
-
-
-
-
-
-// var options = {
-//     'method': 'GET',
-//     'url': url,
-    
-//   };
-//   const result1 = async ()=>{ 
-//       result = await axios(options);
-   
-  
-//   }
-//   const data = async()=>{
-//       try {
-//           var {data} = await axios.get(url);
-//           return {data};
-//       } catch (error) {
-//           console.error(error);
-//       }
-//   }
-//   console.log(data());
-  
- 
-  // You cclsan print/use 'result' here.
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   const port= process.env.PORT || 3000;
