@@ -41,13 +41,12 @@ let user_final = (data)=>{
     return user_obj;
 } 
 
-/*In the below function, we are just fetching todos of a given userid. Also, in the 
-final array of objects, we don't want userId. So we are deleting it */
+/*In the below function, we are just fetching todos of a given userid.  */
 let user_todos =  (id,todos)=>{
     todos_arr=[];
    for(var i=0;i<todos.length;i++){
         if(parseInt(todos[i]["userId"])===id){
-             delete todos[i]["userId"];
+             
              todos_arr.push(todos[i]);
         }
     }
@@ -84,9 +83,9 @@ try {
     Todos.getTodoData().then((data) =>{
     if(userdata=="error")
     return  res.status(404).send("Not found");
-    todos= user_todos(id,data);
+    todos= user_todos(id,data);  //Will return array of todos of given userid
     if(todos.length==0) return res.status(404).send("Cannot be fetched...");
-    user_obj = {...user_obj,"todos":todos};
+    user_obj = {...user_obj,"todos":todos}; //connecting two objects
     res.json(user_obj);
    } )  
     } 
